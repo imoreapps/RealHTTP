@@ -142,7 +142,7 @@ public class HTTPRequest: CustomStringConvertible {
     public var allowsCellularAccess: Bool = true
     
     /// Request's body.
-    public var body: HTTPBody = .empty
+    public var body: HTTPBody?
     
     /// Description of the request
     public var description: String {
@@ -460,7 +460,7 @@ extension HTTPRequest {
         //  - client's common headers (user defined)
         //  - specific body's headers (automatically set)
         //  - request's custom headers set by the user (user defined)
-        let requestHeaders = (client.headers + self.body.headers + self.headers)
+        let requestHeaders = (client.headers + (self.body?.headers ?? HTTPHeaders()) + self.headers)
         
         // Prepare the request
         var urlRequest = try URLRequest(url: fullURL,
@@ -470,7 +470,9 @@ extension HTTPRequest {
                                         headers: requestHeaders)
         urlRequest.httpShouldHandleCookies = true
         urlRequest.allowsCellularAccess = allowsCellularAccess
-        try urlRequest.setHTTPBody(body) // setup the body
+        if let body = self.body {
+            try urlRequest.setHTTPBody(body) // setup the body
+        }
         return urlRequest
     }
     

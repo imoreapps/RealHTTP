@@ -364,7 +364,7 @@ internal class HTTPDataLoader: NSObject,
             return
         }
 
-        if let streamContent = request.body.content as? HTTPBody.StreamContent,
+        if let streamContent = request.body?.content as? HTTPBody.StreamContent,
            let inputStream = streamContent.inputStream(recreate: true).stream {
             inputStream.open() // open the stream
             completionHandler(inputStream)
